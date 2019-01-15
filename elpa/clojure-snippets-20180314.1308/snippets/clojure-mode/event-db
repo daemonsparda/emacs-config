@@ -1,0 +1,7 @@
+# name: reg-event-db
+# key: event-db
+# --
+(re-frame/reg-event-db
+  ::$1$>
+  (fn [db $2]$>
+    $3))

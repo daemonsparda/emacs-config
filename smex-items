@@ -1,0 +1,28 @@
+
+;; ----- smex-history -----
+(
+ package-install
+ toggle-word-wrap
+ feature-mode
+ paredit-mode
+ powershell
+ cljr-update-project-dependency
+ cljr-add-project-dependency
+)
+
+;; ----- smex-data -----
+(
+ (package-install . 7)
+ (butterfly . 1)
+ (cljr-add-project-dependency . 2)
+ (customize-variable . 1)
+ (cider-repl-clear-buffer . 4)
+ (cljr-add-missing-libspec . 1)
+ (yas-expand . 4)
+ (cljr-update-project-dependency . 6)
+ (powershell . 1)
+ (paredit-mode . 3)
+ (feature-mode . 1)
+ (toggle-word-wrap . 2)
+ (yas-reload-all . 5)
+)

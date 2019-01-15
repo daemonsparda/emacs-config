@@ -1,0 +1,16 @@
+# name: address-component
+# key: address
+# --
+(defn $1$> 
+  [name address-type]$> 
+  [:div$> 
+   [input/text-input$> 
+    "$2"$> 
+    {:id (str "input-" name)$> 
+     :type "text"$> 
+     :autocomplete (str address-type " $3")$> 
+     :on-change #(re-frame/dispatch (case address-type$> 
+                                      "permanent" [::events/set-perm-$1 (-> % .-target .-value)]$> 
+                                      "previous" [::events/set-prev-$1 (-> % .-target .-value)]$> 
+                                      "mailing" [::events/set-mail-$1 (-> % .-target .-value)]))$> 
+     :name name}]])

@@ -1,143 +1,217 @@
-;;;;
-;; Packages
-;;;;
-
-;; Define package repositories
+;; Package repository setup
 (require 'package)
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/") t)
-(add-to-list 'package-archives
-             '("tromey" . "http://tromey.com/elpa/") t)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(add-to-list 'package-archives
-             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
-
-(add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
-;; (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-;;                          ("marmalade" . "http://marmalade-repo.org/packages/")
-;;                          ("melpa" . "http://melpa-stable.milkbox.net/packages/")))
-
-
-;; Load and activate emacs packages. Do this first so that the
-;; packages are loaded before you start trying to modify them.
-;; This also sets the load path.
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                    (not (gnutls-available-p))))
+       (proto (if no-ssl "http" "https")))
+  (when no-ssl
+    (warn "\
+Your version of Emacs does not support SSL connections,
+which is unsafe because it allows man-in-the-middle attacks.
+There are two things you can do about this warning:
+1. Install an Emacs version that does support SSL and be safe.
+2. Remove this warning from your init file so you won't see it again."))
+  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
+  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+  (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
 (package-initialize)
 
-;; Download the ELPA archive description if needed.
-;; This informs Emacs about the latest versions of all packages, and
-;; makes them available for download.
-(when (not package-archive-contents)
-  (package-refresh-contents))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("bd7b7c5df1174796deefce5debc2d976b264585d51852c962362be83932873d9" default)))
+ '(inhibit-startup-screen t)
+ '(package-selected-packages
+   (quote
+    (clojure-snippets feature-mode powershell sass-mode clj-refactor ido-yes-or-no smex paredit helm-ag helm highlight-symbol rainbow-delimiters monokai-theme company cider)))
+ '(visible-bell t))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
 
-;; Define he following variables to remove the compile-log warnings
-;; when defining ido-ubiquitous
-(defvar ido-cur-item nil)
-(defvar ido-default-item nil)
-(defvar ido-cur-list nil)
-(defvar predicate nil)
-(defvar inherit-input-method nil)
+;; Disables menu bar, scroll bar and tool bar, who needs that garbage.
+(menu-bar-mode -1) 
+(toggle-scroll-bar -1) 
+(tool-bar-mode -1) 
 
-;; The packages you want installed. You can also install these
-;; manually with M-x package-install
-;; Add in your own as you wish:
-(defvar my-packages
-  '(;; makes handling lisp expressions much, much easier
-    ;; Cheatsheet: http://www.emacswiki.org/emacs/PareditCheatsheet
-    paredit
+;; Enables line numbers
+(global-linum-mode t)
 
-    ;; key bindings and code colorization for Clojure
-    ;; https://github.com/clojure-emacs/clojure-mode
-    clojure-mode
+;; Enable monokai theme
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+(load-theme 'monokai t)
 
-    ;; extra syntax highlighting for clojure
-    clojure-mode-extra-font-locking
+;; Company mode hook for all buffers
+(add-hook 'after-init-hook 'global-company-mode)
 
-    ;; integration with a Clojure REPL
-    ;; https://github.com/clojure-emacs/cider
-    cider
+;; Enable rainbow delimiters in all programming modes
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
 
-    ;; allow ido usage in as many contexts as possible. see
-    ;; customizations/navigation.el line 23 for a description
-    ;; of ido
-    ido-ubiquitous
+;; Enables highlight symbols
+(require 'highlight-symbol)
+(global-set-key [(control f3)] 'highlight-symbol)
+(global-set-key [f3] 'highlight-symbol-next)
+(global-set-key [(shift f3)] 'highlight-symbol-prev)
+(global-set-key [(meta f3)] 'highlight-symbol-query-replace)
 
-    ;; Enhances M-x to allow easier execution of commands. Provides
-    ;; a filterable list of possible commands in the minibuffer
-    ;; http://www.emacswiki.org/emacs/Smex
-    smex
+;; UTF-8 as default encoding
+(set-language-environment "UTF-8")
 
-    ;; project navigation
-    projectile
+;; Set the default comment column to 70
+(setq-default comment-column 70)
 
-    ;; colorful parenthesis matching
-    rainbow-delimiters
+;; Every time a window is started, make sure it get maximized
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-    ;; edit html tags like sexps
-    tagedit
+;; Enter cider mode when entering the clojure major mode
+(add-hook 'clojure-mode-hook 'cider-mode)
 
-    ;; git integration
-    magit))
+;; Turn on auto-completion with Company-Mode
+(add-hook 'cider-repl-mode-hook #'company-mode)
+(add-hook 'cider-mode-hook #'company-mode)
 
-;; On OS X, an Emacs instance started from the graphical user
-;; interface will have a different environment than a shell in a
-;; terminal window, because OS X does not run a shell during the
-;; login. Obviously this will lead to unexpected results when
-;; calling external utilities like make from Emacs.
-;; This library works around this problem by copying important
-;; environment variables from the user's shell.
-;; https://github.com/purcell/exec-path-from-shell
-(if (eq system-type 'darwin)
-    (add-to-list 'my-packages 'exec-path-from-shell))
+;; Replace return key with newline-and-indent when in cider mode.
+(add-hook 'cider-mode-hook '(lambda () (local-set-key (kbd "RET") 'newline-and-indent)))
 
-(dolist (p my-packages)
-  (when (not (package-installed-p p))
-    (package-install p)))
+;; Hook paredit with clojure mode, lisp mode, and the REPL
+(add-hook 'clojure-mode-hook #'paredit-mode)
+(add-hook 'emacs-lisp-mode-hook #'paredit-mode)
+(add-hook 'cider-repl-mode-hook 'paredit-mode)
+
+;; Set default font size
+(set-face-attribute 'default nil :height 140)
+
+;; Show parenthesis mode
+(show-paren-mode 1)
+
+;; Update the color of the company-mode context menu to fit the Monokai theme
+;; @source: https://github.com/search?q=deftheme+company-tooltip&type=Code
+(deftheme monokai-overrides)
+
+(let ((class '((class color) (min-colors 257)))
+      (terminal-class '((class color) (min-colors 89))))
+
+  (custom-theme-set-faces
+   'monokai-overrides
+
+   ;; Linum and mode-line improvements (only in sRGB).
+   `(linum
+     ((,class :foreground "#75715E"
+              :background "#49483E")))
+   `(mode-line-inactive
+     ((,class (:box (:line-width 1 :color "#2c2d26" :style nil)
+                    :background "#2c2d26"))))
+
+   ;; Custom region colouring.
+   `(region
+     ((,class :foreground "#75715E"
+              :background "#49483E")
+      (,terminal-class :foreground "#1B1E1C"
+                       :background "#8B8878")))
+
+   ;; Additional modes
+   ;; Company tweaks.
+   `(company-tooltip-common
+     ((t :foreground "#F8F8F0"
+         :background "#474747"
+         :underline t)))
+
+   `(company-template-field
+     ((t :inherit company-tooltip
+         :foreground "#C2A1FF")))
+
+   `(company-tooltip-selection
+     ((t :background "#349B8D"
+         :foreground "#BBF7EF")))
+
+   `(company-tooltip-common-selection
+     ((t :foreground "#F8F8F0"
+         :background "#474747"
+         :underline t)))
+
+   `(company-scrollbar-fg
+     ((t :background "#BBF7EF")))
+
+   `(company-tooltip-annotation
+     ((t :inherit company-tooltip
+         :foreground "#C2A1FF")))
+
+   ;; Popup menu tweaks.
+   `(popup-menu-face
+     ((t :foreground "#A1EFE4"
+         :background "#49483E")))
+
+   `(popup-menu-selection-face
+     ((t :background "#349B8D"
+         :foreground "#BBF7EF")))
+
+   ;; Circe
+   `(circe-prompt-face
+     ((t (:foreground "#C2A1FF" :weight bold))))
+
+   `(circe-server-face
+     ((t (:foreground "#75715E"))))
+
+   `(circe-highlight-nick-face
+     ((t (:foreground "#AE81FF" :weight bold))))
+
+   `(circe-my-message-face
+     ((t (:foreground "#E6DB74"))))
+
+   `(circe-originator-face
+     ((t (:weight bold))))))
+
+;; Set easy key binding for helm-ag
+(global-set-key (kbd "M-s") 'helm-do-ag)
+
+;; Set keys for CIDER and other things
+(global-set-key [f9] 'cider-jack-in)
+(global-set-key [apps] 'other-frame)
+(global-set-key [f11] 'speedbar)
+
+;; Scroll one line at a time (less "jumpy" than defaults)
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+(setq scroll-step 1) ;; keyboard scroll one line at a time
+
+;; Enable ido mode everywhere
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(ido-mode 1)
+(require 'ido-completing-read+)
+(ido-ubiquitous-mode 1)
+(ido-yes-or-no-mode 1)
 
 
-;; Place downloaded elisp files in ~/.emacs.d/vendor. You'll then be able
-;; to load them.
-;;
-;; For example, if you download yaml-mode.el to ~/.emacs.d/vendor,
-;; then you can add the following code to this file:
-;;
-;; (require 'yaml-mode)
-;; (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-;; 
-;; Adding this code will make Emacs enter yaml mode whenever you open
-;; a .yml file
-(add-to-list 'load-path "~/.emacs.d/vendor")
+;; Enable smex
+(smex-initialize) 
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
+;; clj-refactor bindings
+(require 'clj-refactor)
 
-;;;;
-;; Customization
-;;;;
+(defun my-clojure-mode-hook ()
+    (clj-refactor-mode 1)
+    (yas-minor-mode 1) ; for adding require/use/import statements
+    ;; This choice of keybinding leaves cider-macroexpand-1 unbound
+    (cljr-add-keybindings-with-prefix "C-c C-r"))
 
-;; Add a directory to our load path so that when you `load` things
-;; below, Emacs knows where to look for the corresponding file.
-(add-to-list 'load-path "~/.emacs.d/customizations")
+(add-hook 'clojure-mode-hook #'my-clojure-mode-hook)
 
-;; Sets up exec-path-from-shell so that Emacs will use the correct
-;; environment variables
-(load "shell-integration.el")
-
-;; These customizations make it easier for you to navigate files,
-;; switch buffers, and choose options from the minibuffer.
-(load "navigation.el")
-
-;; These customizations change the way emacs looks and disable/enable
-;; some user interface elements
-(load "ui.el")
-
-;; These customizations make editing a bit nicer.
-(load "editing.el")
-
-;; Hard-to-categorize customizations
-(load "misc.el")
-
-;; For editing lisps
-(load "elisp-editing.el")
-
-;; Langauage-specific
-(load "setup-clojure.el")
-(load "setup-js.el")
+;; Clojure snippets
+(when (require 'yasnippet nil 'noerror)
+  (progn
+    (yas/load-directory "~/.emacs.d/elpa/clojure-snippets-20180314.1308/snippets")))

@@ -1,0 +1,7 @@
+# name: reg-event-db-basic
+# key: event
+# --
+(re-frame/reg-event-db
+  ::$1$>
+  (fn [db [_ value]]$>
+    (assoc-in db [$2 :value] value)))
