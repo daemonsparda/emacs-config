@@ -1,0 +1,4 @@
+#name : (defproject name "version" ...)
+# --
+(defproject ${1:name} "${2:version}" 
+  }:dependencies [[org.clojure/clojure "${3:version}"]])
