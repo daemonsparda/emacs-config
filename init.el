@@ -29,7 +29,8 @@ There are two things you can do about this warning:
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-    (ensime clojure-snippets feature-mode powershell sass-mode clj-refactor ido-yes-or-no smex paredit helm-ag helm highlight-symbol rainbow-delimiters monokai-theme company cider)))
+    (dockerfile-mode dotenv-mode ensime clojure-snippets feature-mode powershell sass-mode clj-refactor ido-yes-or-no smex paredit helm-ag helm highlight-symbol rainbow-delimiters monokai-theme company cider)))
+ '(safe-local-variable-values (quote ((cider-shadow-cljs-default-options . "app"))))
  '(visible-bell t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

@@ -1,18 +1,18 @@
 
 ;; ----- smex-history -----
 (
- powershell-mode
- sh-execute-region
- shell-script-mode
- cider-format-edn-region
- cider-format-buffer
- cider-auto-test-mode
+ whitespace-mode
+ paredit-mode
  cider-connect
+ cider-auto-test-mode
+ ido-cr+-update-blacklist
+ list-packages
+ package-refresh-contents
 )
 
 ;; ----- smex-data -----
 (
- (package-install . 7)
+ (package-install . 10)
  (butterfly . 1)
  (cljr-add-project-dependency . 2)
  (customize-variable . 1)
@@ -21,7 +21,7 @@
  (yas-expand . 4)
  (cljr-update-project-dependency . 6)
  (powershell . 1)
- (paredit-mode . 3)
+ (paredit-mode . 5)
  (feature-mode . 1)
  (toggle-word-wrap . 2)
  (yas-reload-all . 5)
@@ -38,11 +38,22 @@
  (cider-inspect-last-result . 3)
  (clojure-mode . 4)
  (text-mode . 1)
- (cider-connect . 8)
- (cider-auto-test-mode . 3)
+ (cider-connect . 9)
+ (cider-auto-test-mode . 4)
  (cider-format-buffer . 1)
  (cider-format-edn-region . 2)
  (shell-script-mode . 1)
  (sh-execute-region . 1)
  (powershell-mode . 1)
+ (dotenv-mode . 1)
+ (dockerfile-mode . 1)
+ (desktop-change-dir . 2)
+ (whitespace-mode . 6)
+ (table-capture . 4)
+ (cider-jack-in-cljs . 3)
+ (list-tags . 1)
+ (list-packages . 3)
+ (package-refresh-contents . 1)
+ (ido-cr+-update-blacklist . 4)
+ (cider-test-run-test . 2)
 )
